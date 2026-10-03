@@ -17,7 +17,11 @@ function supportsWebGL() {
   } catch { return false; }
 }
 
-if (wrap && supportsWebGL()) init();
+if (wrap) {
+  if (supportsWebGL()) {
+    try { init(); } catch { wrap.classList.add("no-3d"); }
+  } else wrap.classList.add("no-3d");
+}
 
 function init() {
   const isMobile = matchMedia("(max-width: 860px)").matches;
@@ -72,9 +76,16 @@ function init() {
     mesh = new THREE.Mesh(geo, material);
     pivot.add(mesh);
     fit();
-    wrap.classList.add("is-3d");
-    intro.start = performance.now();
-  });
+    // compila os shaders e desenha o primeiro quadro antes de mostrar,
+    // para não haver travada nem piscada no celular
+    applyPose(0, 0);
+    renderer.compile(scene, camera);
+    renderer.render(scene, camera);
+    setTimeout(() => {
+      wrap.classList.add("is-3d");
+      intro.start = performance.now();
+    }, 30);
+  }, undefined, () => wrap.classList.add("no-3d"));
 
   function flipWinding(geo) {
     const attrs = Object.values(geo.attributes);
@@ -105,6 +116,7 @@ function init() {
     camera.updateProjectionMatrix();
   }
   new ResizeObserver(fit).observe(wrap);
+  fit();
 
   // interação: mouse no desktop, arrastar no celular
   const target = { x: 0, y: 0 }, cur = { x: 0, y: 0 };
@@ -129,6 +141,15 @@ function init() {
   let visible = true;
   new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(wrap);
 
+  function applyPose(t, k) {
+    const sway = reduce ? 0 : Math.sin(t * 0.55) * 0.32;
+    const scroll = Math.min(1, scrollY / innerHeight);
+    pivot.rotation.y = (1 - k) * -Math.PI * 1.4 + sway + cur.x * 0.45 + dragY + scroll * 0.9;
+    pivot.rotation.x = (1 - k) * 0.5 + (reduce ? 0 : Math.sin(t * 0.4) * 0.06) + cur.y * 0.25 - scroll * 0.25;
+    pivot.position.y = (reduce ? 0 : Math.sin(t * 0.9) * 0.12) + scroll * 1.2;
+    pivot.scale.setScalar(0.55 + 0.45 * k);
+  }
+
   const clock = new THREE.Clock();
   function loop() {
     requestAnimationFrame(loop);
@@ -140,15 +161,7 @@ function init() {
     cur.y += (target.y - cur.y) * 0.06;
     dragY *= 0.96;
 
-    const sway = reduce ? 0 : Math.sin(t * 0.55) * 0.32;
-    const scroll = Math.min(1, scrollY / innerHeight);
-
-    pivot.rotation.y = (1 - k) * -Math.PI * 1.4 + sway + cur.x * 0.45 + dragY + scroll * 0.9;
-    pivot.rotation.x = (1 - k) * 0.5 + (reduce ? 0 : Math.sin(t * 0.4) * 0.06) + cur.y * 0.25 - scroll * 0.25;
-    pivot.position.y = (reduce ? 0 : Math.sin(t * 0.9) * 0.12) + scroll * 1.2;
-    pivot.scale.setScalar(0.55 + 0.45 * k);
-    material.opacity = 1;
-
+    applyPose(t, k);
     renderer.render(scene, camera);
   }
   loop();

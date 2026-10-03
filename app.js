@@ -73,7 +73,9 @@
     if (document.fonts) await document.fonts.ready;
     splitLines();
     if (!hasGSAP) return;
-    if (!reduce && window.Lenis) {
+    // rolagem suave só com mouse; no celular a rolagem nativa é melhor e não trava a gaveta
+    const touch = matchMedia("(hover: none), (pointer: coarse)").matches;
+    if (!reduce && !touch && window.Lenis) {
       lenis = new Lenis({ lerp: .085, smoothWheel: true });
       lenis.on("scroll", ScrollTrigger.update);
       gsap.ticker.add((t) => lenis.raf(t * 1000));

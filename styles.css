@@ -109,9 +109,11 @@ em { font-style: italic; }
   content: ""; position: absolute; inset: 12% 8%; border-radius: 50%; pointer-events: none;
   background: radial-gradient(closest-side, rgba(226, 94, 48, .28), rgba(226, 94, 48, 0)); filter: blur(10px);
 }
-.hero__3d canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; }
-.hero__3d-fallback { position: absolute; inset: 0; margin: auto; width: 70%; height: auto; transition: opacity .6s; }
-.hero__3d.is-3d .hero__3d-fallback { opacity: 0; }
+.hero__3d canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; opacity: 0; transition: opacity 1.2s ease; }
+.hero__3d.is-3d canvas { opacity: 1; }
+/* logo plano só aparece se o aparelho não suportar 3D */
+.hero__3d-fallback { position: absolute; inset: 0; margin: auto; width: 70%; height: auto; opacity: 0; transition: opacity .6s; }
+.hero__3d.no-3d .hero__3d-fallback { opacity: 1; }
 .hero__title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(66px, 10.4vw, 190px); line-height: .9; letter-spacing: -.02em; }
 .hero__title em { color: var(--orange); }
 .hero__theme { margin: clamp(10px, 1.4vw, 20px) 0 0; font-family: var(--serif); font-size: clamp(28px, 3.4vw, 56px); line-height: 1.05; }
@@ -228,7 +230,8 @@ em { font-style: italic; }
 .drawer.is-open .drawer__bg { opacity: 1; }
 .drawer__panel {
   position: absolute; top: 0; right: 0; bottom: 0; width: min(600px, 100%); background: var(--cream); color: var(--ink);
-  padding: 80px clamp(22px, 4vw, 54px) 50px; overflow-y: auto; overscroll-behavior: contain;
+  padding: 80px clamp(22px, 4vw, 54px) calc(50px + env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; touch-action: pan-y; height: 100%; max-height: 100dvh;
   transform: translateX(100%); transition: transform .8s var(--ease);
 }
 .drawer.is-open .drawer__panel { transform: none; }
