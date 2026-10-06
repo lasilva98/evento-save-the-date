@@ -9,8 +9,8 @@
     // URL do App da Web do Google Apps Script (termina em /exec) que grava as
     // inscrições na planilha. Enquanto for null, ficam só no navegador (teste).
     endpoint: "https://script.google.com/macros/s/AKfycbw_zZqQ9CrPhZSz1DP499My-nXuIqAxuxYQNp84ffNrSXwd49Baj6iOLfu63zd2fJ7SNA/exec",
-    eventStart: new Date("2026-11-04T16:00:00-03:00"),
-    eventEnd: new Date("2026-11-04T19:00:00-03:00"),
+    eventStart: new Date("2026-11-04T09:00:00-03:00"),
+    eventEnd: new Date("2026-11-04T11:00:00-03:00"),
     eventDate: "2026-11-04",
     title: "AI Agents Zendesk + WhatsApp · Save the Date",
     address: "Torre 1 - Av. Dr. Chucri Zaidan, 920 - 14º Andar - Vila Cordeiro, São Paulo - SP, 04583-110",
@@ -278,7 +278,7 @@
      Agenda (Google / .ics)
      ========================================================= */
   const toICS = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  const details = "Uma tarde no office da Zendesk sobre AI Agents e a nova cobrança do WhatsApp pela Meta, com casos reais e networking com café. Evento gratuito.";
+  const details = "Café da manhã de networking com clientes Zendesk (9h às 9h45), seguido de AI Agents e as novas cobranças da Meta no WhatsApp, com casos reais. Evento gratuito.";
   $("#gcalBtn").href = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
     `&text=${encodeURIComponent(CONFIG.title)}&dates=${toICS(CONFIG.eventStart)}/${toICS(CONFIG.eventEnd)}` +
     `&details=${encodeURIComponent(details)}&location=${q}`;
@@ -299,7 +299,7 @@
 
   /* =========================================================
      Previsão do tempo (Open-Meteo, sem chave)
-     - até 16 dias antes: previsão real para 04/11 às 16h
+     - até 16 dias antes: previsão real para 04/11 às 9h
      - antes disso: média histórica de 04/11 nos últimos 5 anos
      ========================================================= */
   const WMO = (c) => {
@@ -323,28 +323,28 @@
       if (days <= 15 && days > -1) {
         const r = await (await fetch(`https://api.open-meteo.com/v1/forecast?${base}&start_date=${CONFIG.eventDate}&end_date=${CONFIG.eventDate}` +
           "&daily=precipitation_probability_max&hourly=temperature_2m,weather_code")).json();
-        const [ic, label] = WMO(r.hourly.weather_code[16]);
+        const [ic, label] = WMO(r.hourly.weather_code[9]);
         const rain = r.daily.precipitation_probability_max[0] ?? 0;
-        icon.textContent = ic; temp.textContent = `${Math.round(r.hourly.temperature_2m[16])}°`;
-        desc.textContent = `${label} às 16h, com ${rain}% de chance de chuva. ${rain >= 50 ? "Vale levar um guarda-chuva!" : "Tudo indica uma tarde tranquila."}`;
+        icon.textContent = ic; temp.textContent = `${Math.round(r.hourly.temperature_2m[9])}°`;
+        desc.textContent = `${label} às 9h, com ${rain}% de chance de chuva. ${rain >= 50 ? "Vale levar um guarda-chuva!" : "Tudo indica uma manhã tranquila."}`;
         note.textContent = "Previsão para o dia do evento, via Open-Meteo.";
       } else {
         const years = [2021, 2022, 2023, 2024, 2025];
         const res = await Promise.all(years.map((y) => fetch(`https://archive-api.open-meteo.com/v1/archive?${base}&start_date=${y}-11-04&end_date=${y}-11-04` +
           "&daily=precipitation_sum&hourly=temperature_2m").then((x) => x.json())));
         const avg = (a) => a.reduce((s, v) => s + v, 0) / a.length;
-        const t16 = Math.round(avg(res.map((r) => r.hourly.temperature_2m[16])));
+        const t9 = Math.round(avg(res.map((r) => r.hourly.temperature_2m[9])));
         const rainy = res.filter((r) => r.daily.precipitation_sum[0] >= 1).length;
         icon.textContent = rainy >= 3 ? "🌦️" : rainy >= 1 ? "⛅" : "🌤️";
-        temp.textContent = `~${t16}°`;
-        desc.textContent = `Nessa época, São Paulo costuma estar assim às 16h. Choveu em ${rainy} dos últimos ${years.length} anos, então ${rainy >= 3 ? "melhor levar um guarda-chuva" : "um casaquinho leve resolve"}.`;
+        temp.textContent = `~${t9}°`;
+        desc.textContent = `Nessa época, São Paulo costuma estar assim às 9h. Choveu em ${rainy} dos últimos ${years.length} anos, então ${rainy >= 3 ? "melhor levar um guarda-chuva" : "um casaquinho leve resolve"}.`;
         const avail = new Date(eventNoon - 15 * 86400000).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
         note.textContent = `Média histórica de 4/11. A previsão de verdade aparece aqui a partir de ${avail}.`;
       }
       weatherLoaded = true;
     } catch {
-      icon.textContent = "🌤️"; temp.textContent = "~24°";
-      desc.textContent = "Primavera em SP: tarde quente, com chance de pancada no fim do dia.";
+      icon.textContent = "🌤️"; temp.textContent = "~20°";
+      desc.textContent = "Primavera em SP: manhã amena, que costuma esquentar ao longo do dia.";
       note.textContent = "Não conseguimos carregar a previsão agora.";
     }
   }
