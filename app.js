@@ -95,9 +95,20 @@
      Animações
      ========================================================= */
   function animate() {
+    // proteção: se o navegador não estiver gerando quadros de animação
+    // (economia de bateria, aba em segundo plano), mostra tudo no estado final
+    const f0 = gsap.ticker.frame;
+    setTimeout(() => {
+      if (gsap.ticker.frame - f0 < 5) {
+        gsap.globalTimeline.getChildren(true, true, false).forEach((t) => t.progress(1));
+        document.querySelectorAll(".line > span, .reveal, .hero__logos > *, .hero__std, .hero__sub, .hero__foot > *, .nav > *")
+          .forEach((el) => { el.style.transform = "none"; el.style.opacity = "1"; });
+      }
+    }, 2500);
+
     // hero
     gsap.from(".hero .split-lines .line > span", { yPercent: 110, duration: 1.4, ease: "expo.out", stagger: .12, delay: .15 });
-    gsap.from(".hero__logos > *, .hero__sub, .hero__foot > *, .nav > *", { y: 18, opacity: 0, duration: 1.1, ease: "expo.out", stagger: .06, delay: .45 });
+    gsap.from(".hero__logos > *, .hero__std, .hero__sub, .hero__foot > *, .nav > *", { y: 18, opacity: 0, duration: 1.1, ease: "expo.out", stagger: .06, delay: .45 });
 
     // títulos e blocos revelados ao entrar na tela
     $$(".split-lines").forEach((el) => {

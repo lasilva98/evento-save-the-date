@@ -114,11 +114,14 @@ em { font-style: italic; }
 /* logo plano só aparece se o aparelho não suportar 3D */
 .hero__3d-fallback { position: absolute; inset: 0; margin: auto; width: 70%; height: auto; opacity: 0; transition: opacity .6s; }
 .hero__3d.no-3d .hero__3d-fallback { opacity: 1; }
-.hero__title { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(66px, 10.4vw, 190px); line-height: .9; letter-spacing: -.02em; }
+.hero__std { margin: 0 0 clamp(12px, 1.6vw, 22px); font-family: var(--serif); font-size: clamp(22px, 2.2vw, 34px); line-height: 1; color: var(--cream); }
+.hero__std em { color: var(--orange); }
+.hero__title { margin: 0; max-width: 15ch; font-family: var(--serif); font-weight: 400; font-size: clamp(46px, 5.3vw, 96px); line-height: 1; letter-spacing: -.02em; }
 .hero__title em { color: var(--orange); }
 .hero__theme { margin: clamp(10px, 1.4vw, 20px) 0 0; font-family: var(--serif); font-size: clamp(28px, 3.4vw, 56px); line-height: 1.05; }
 .hero__theme em { color: var(--orange); }
-.hero__sub { margin: clamp(18px, 2.4vw, 30px) 0 0; max-width: 46ch; font-size: clamp(17px, 1.45vw, 21px); line-height: 1.5; color: var(--muted-l); }
+.hero__sub b { color: var(--cream); font-weight: 500; }
+.hero__sub { margin: clamp(18px, 2.4vw, 30px) 0 0; max-width: 44ch; font-size: clamp(17px, 1.45vw, 21px); line-height: 1.5; color: var(--muted-l); }
 
 .hero__foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; border-top: 1px solid var(--line-l); padding-top: 22px; }
 .facts { margin: 0; display: flex; gap: clamp(20px, 4vw, 60px); flex-wrap: wrap; }
@@ -130,7 +133,8 @@ em { font-style: italic; }
   .hero { gap: 18px; padding-top: 82px; }
   .hero__main { grid-template-columns: 1fr; gap: 0; }
   .hero__3d { order: -1; height: 25svh; min-height: 170px; margin: -10px -16px 0; }
-  .hero__title { font-size: clamp(56px, 16vw, 110px); }
+  .hero__title { font-size: clamp(38px, 10.2vw, 76px); max-width: none; }
+  .hero__std { font-size: 22px; }
   .hero__sub { margin-top: 14px; font-size: 16px; }
 }
 @media (max-width: 760px) {
